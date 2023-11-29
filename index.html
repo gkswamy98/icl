@@ -20,12 +20,12 @@
     <!-- Facebook automatically scrapes this. Go to https://developers.facebook.com/tools/debug/
         if you update and want to force Facebook to re-scrape. -->
 	<meta property="og:title" content="Learning Shared Safety Constraints from Multi-task Demonstrations" />
-	<meta property="og:description" content="Inverse reinforcement learning approaches reduce the problem of imitation learning to repeatedly solving a computationally expensive reinforcement learning problem. We prove and empirically validate that resetting the learner to states from the expert's state distribution during the reinforcement learning subroutine allows us match expert performance exponentially faster. " />
+	<meta property="og:description" content="We formalize the problem of learning constraints from expert demonstrations by extending inverse reinforcement learning, and we develop a multi-task version of inverse constraint learning to avoid selecting degenerate constraints. We validate our methods on high-dimensional continuous control tasks and show that we can match expert performance and recover ground-truth constraints. " />
     <!-- Twitter automatically scrapes this. Go to https://cards-dev.twitter.com/validator?
         if you update and want to force Twitter to re-scrape. -->
-    <meta property="twitter:card"          content="Inverse reinforcement learning approaches reduce the problem of imitation learning to repeatedly solving a computationally expensive reinforcement learning problem. We prove and empirically validate that resetting the learner to states from the expert's state distribution during the reinforcement learning subroutine allows us match expert performance exponentially faster. " />
+    <meta property="twitter:card"          content="We formalize the problem of learning constraints from expert demonstrations by extending inverse reinforcement learning, and we develop a multi-task version of inverse constraint learning to avoid selecting degenerate constraints. We validate our methods on high-dimensional continuous control tasks and show that we can match expert performance and recover ground-truth constraints. " />
     <meta property="twitter:title"         content="Learning Shared Safety Constraints from Multi-task Demonstrations" />
-    <meta property="twitter:description"   content="Inverse reinforcement learning approaches reduce the problem of imitation learning to repeatedly solving a computationally expensive reinforcement learning problem. We prove and empirically validate that resetting the learner to states from the expert's state distribution during the reinforcement learning subroutine allows us match expert performance exponentially faster. " />
+    <meta property="twitter:description"   content="We formalize the problem of learning constraints from expert demonstrations by extending inverse reinforcement learning, and we develop a multi-task version of inverse constraint learning to avoid selecting degenerate constraints. We validate our methods on high-dimensional continuous control tasks and show that we can match expert performance and recover ground-truth constraints. " />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
@@ -101,21 +101,35 @@
 
     <h1>Key Insights</h1>
 
-    <h2>1. Learning Constraints by Comparing a Safe Expert with a Reward-Optimal Policy</h2>
-    <h2>2. Multi-task Data Helps to Avoid Degenerate Constraints</h2>
-    <!--
-    <p style="width: 80%;">Usually in inverse RL, an adversary picks a reward function that maximally distinguishes learner and expert samples in an outer loop and the learner optimizes this reward function in the inner loop via reinforcement learning. While inverse RL comes with strong guaratees w.r.t. compounding errors, each inner loop iteration requires solving a problem that could take a number of interactions with the environment that is exponential in the task horizon. For example, if the learner is operating in a tree structured MDP and the adversary picks a reward function that is 0 everywhere except for one of the leaf nodes, the learner needs to explore the entire tree in every inner loop iteration.</p>
+    <h2>1. Formalizing Inverse Constraint Learning </h2>
+    <p style="width: 80%;">
+        We consider a setting where we have access to expert demonstrations of a task, along with the task's reward. 
+        This allows us to compare the behavior of the expert and reward-optimal policy for a task. Our first insight is that actions taken by the reward-optimal but not the expert policy are likely to be forbidden. 
+        We can extract a constraint in this way by formulating <code>ICL</code> (inverse constraint learning) as a two-player zero sum game between a constraint and policy player:
+        $$\max_{c \in \mathcal{F}_c} \max_{\lambda > 0} \min_{\pi \in \Pi} J(\pi_E, r - \lambda c) - J(\pi, r - \lambda c)$$
+    </p>
 
-    <h2>2. Expert Resets Can Speed Up RL </h2>
-    <p style="width: 80%;">The reduction of imitation learning to repeated reinforcement learning is ignoring a key piece of information: given our goal is to imitate the expert, the learner should only have to compete against policies with similar visitation distributions to that of the expert. A simple way to implement this insight is to change the learner's start-state distribution to be the expert's visitation distribution during reinforcement learning. This makes it so that the learner wastes fewer environment interactions exploring parts of the state space that the expert never visits. We prove that doing so allows us to derive the first polynomial time algorithms for inverse RL, an exponential speedup. We call them <code>MMDP</code> (moment-matching by dynamic programming) and <code>NRMM</code> (no-regret moment matching).</p>
+    <p style="width: 80%;">
+        The policy player aims to maximize their reward while satisfying the constraint using constrained RL, while the constraint player adversarially picks constraints which penalize the reward-optimal learner policy relative to the expert. </p>
 
-    <h2>3. Interpolated Practical Procedure</h2>
-    <p style="width: 80%;">However, in the worst case, performing expert resets can introduce compounding errors (though in far fewer circumstances than a completely offline approach like behavioral cloning). To hedge against this possibility, we propose interpolating (either over the course of training or within a single policy optimization step) between standard inverse RL and one of our algorithms. Interpolation allows the learner to quickly settle on a roughly correct policy and the fine-tune it via RL. We call these interpolated approaches <code>FILTER</code> (fast inverted loop training via expert resets).</p>
-        <p style="width: 80%;"> In practice, we observe a remarkable speedup on problems on which exploration is hard (e.g. mazes) -- compare our approaches in teal/orange to standard inverse RL in grey. </p>
-        <img style="width: 40%;" src="./resources/antmaze_results.png"/>
-        <p style="width: 80%;">We also see moderate speedups on tasks like locomotion. Importantly, this strategy can be combined with any off-the-shelf IRL approach for faster learning. We release all of our code at the link below.</p>
-        <a href="https://github.com/konwook/mticl"><i class="fa fa-github" style="font-size: 50px; padding-bottom: 10px"></i><br>[Code]</a>
-      <hr> -->
+    <h2>2. Leveraging Multi-task Data </h2>
+    <p style="width: 80%;"> One potential failure mode of <code>ICL</code> is that it can lead to an overly conservative constraint which forbids all non-expert behavior. Such a constraint would fail to generalize to new tasks. To resolve this, we propose a multi-task version of inverse constraint learning, <code>MT-ICL</code>, which provides better coverage of the state space and learns a shared constraint across multiple tasks.
+    If we observe $K$ samples of the form $(r_k, \{\xi \sim \pi_E^k \})$, we can formulate the multi-task game as:  </p>
+    $$\max_{c \in \mathcal{F}_c} \min_{\pi^{1:K} \in \Pi} \max_{\lambda^{1:K} > 0}  \sum_i^K J(\pi_E^i, r^i - \lambda^i c) - J(\pi^i, r^i - \lambda^i c)$$
+    <p style="width: 80%;"> We further provide a statistical condition of generalization of the shared constraint and empirically show that <code>MT-ICL</code> generalizes better to new tasks.</p>
+
+
+    <h2>3. Practical Procedures for Continuous Control </h2>
+    <p style="width: 80%;">We provide implementations of constrained reinforcement learning and inverse constraint learning and benchmark them on tasks from the PyBullet and MuJoCo suite. For a single task with restricted function classes of linear constraints, we show that <code>ICL</code> can exactly recover the ground truth constraint, match expert perforamnce, and is even robust to suboptimal expert demonstrations.
+        On the more challenging multi-task AntMaze setting, within a single iteration, <code>MT-ICL</code> is able to learn policies that match expert perforamnce and constraint violation, <i>all without ever interacting with the ground-truth maze</i>. 
+    </p>
+    <img style="width: 20%;" src="./resources/Maze_constraint.svg" alt="Maze constraint figure."/>
+    <img style="width: 20%;" src="./resources/Maze_reward.svg" alt="Maze reward figure."/>
+    <img style="width: 20%;" src="./resources/Maze_violation.svg" alt="Maze violation figure."/>
+    <p style="width: 80%;"> We release all of our code at the link below. </p>
+
+    <a href="https://github.com/konwook/mticl"><i class="fa fa-github" style="font-size: 50px; padding-bottom: 10px"></i><br>[Code]</a>
+    <hr>
 
 
 
