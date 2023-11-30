@@ -125,13 +125,14 @@
     <img style="width: 20%;" src="./resources/Position_reward_anneal_aug_slope_0.5.svg" alt="Position reward figure."/>
     <img style="width: 20%;" src="./resources/Position_violation_anneal_aug_slope_0.5.svg" alt="Position violation figure."/>
     <p style="width: 80%;">
+        We consider the task of ant locomotion with a position constraint of staying above the line $y=0.5x$. 
         Over the course of <code>ICL</code> training, the learned position constraint (blue line) converges to the ground truth constraint (red line), and the ant learns to escape the unsafe red region.
     </p>
     <img style="width: 50%; padding-bottom: 20px" src="./resources/evolution_actual_final.svg" alt="Position constraint evolution."/>
 
     <p style="width: 80%;">
-        We evaluate <code>MT-ICL</code> on the more challenging AntMaze setting where navigating to different goals corresponds to different tasks.  
-        Within a single iteration, <code>MT-ICL</code> is able to learn policies that match expert performance and constraint violation, <i>all without ever interacting with the ground-truth maze</i>. 
+        We evaluate <code>MT-ICL</code> on the more challenging AntMaze setting where navigating to different goals corresponds to different tasks. The constraint in this setting is to not walk through the 
+        walls of the maze. Within a single iteration, <code>MT-ICL</code> is able to learn policies that match expert performance and constraint violation, <i>all without ever interacting with the ground-truth maze</i>. 
     </p>
     <img style="width: 20%;" src="./resources/Maze_constraint.svg" alt="Maze constraint figure."/>
     <img style="width: 20%;" src="./resources/Maze_reward.svg" alt="Maze reward figure."/>
