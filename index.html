@@ -7,6 +7,10 @@
         inlineMath: [['$','$']]
       }
     });
+    MathJax.Hub.Register.StartupHook("TeX color Ready", function() {
+	MathJax.Extension["TeX/color"].colors["error"] = '#F96565';
+	MathJax.Extension["TeX/color"].colors["expert"] = '#008000';
+    });
   </script>
   <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script> 
 <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap"
@@ -106,7 +110,7 @@
         We consider a setting where we have access to expert demonstrations of a task, along with the task's reward. 
         This allows us to compare the behavior of the expert and reward-optimal policy for a task. Our first insight is that actions taken by the reward-optimal but not the expert policy are likely to be forbidden. 
         We can extract a constraint in this way by formulating <code>ICL</code> (inverse constraint learning) as a two-player zero sum game between a constraint and policy player:
-        $$\color{200,100,30}{\max_{c \in \mathcal{F}_c} \max_{\lambda > 0}}\color[RGB]{200,100,30}{\min_{\pi \in \Pi}} J(\pi_E, r - \color[RGB]{200,100,30}{\lambda c}) - J(\color[RGB]{200,100,30}{\pi}, r - \color[RGB]{200,100,30}{\lambda c})$$
+        $$\color{error}{\max_{c \in \mathcal{F}_c} \max_{\lambda > 0}}\color{expert}{\min_{\pi \in \Pi}} J(\pi_E, r - \color{error}{\lambda c}) - J(\color{expert}{\pi}, r - \color{error}{\lambda c})$$
     </p>
 
     <p style="width: 80%;">
