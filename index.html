@@ -106,7 +106,7 @@
         We consider a setting where we have access to expert demonstrations of a task, along with the task's reward. 
         This allows us to compare the behavior of the expert and reward-optimal policy for a task. Our first insight is that actions taken by the reward-optimal but not the expert policy are likely to be forbidden. 
         We can extract a constraint in this way by formulating <code>ICL</code> (inverse constraint learning) as a two-player zero sum game between a constraint and policy player:
-        $$\color[HTML]{F96565}{\max_{c \in \mathcal{F}_c} \max_{\lambda > 0}}\color[HTML]{008000}{\min_{\pi \in \Pi}} J(\pi_E, r - \color[HTML]{F96565}{\lambda c}) - J(\color[HTML]{008000}{\pi}, r - \color[HTML]{F96565}{\lambda c})$$
+        $$\color[RGB]{200,100,30}{\max_{c \in \mathcal{F}_c} \max_{\lambda > 0}}\color[RGB]{200,100,30}{\min_{\pi \in \Pi}} J(\pi_E, r - \color[RGB]{200,100,30}{\lambda c}) - J(\color[RGB]{200,100,30}{\pi}, r - \color[RGB]{200,100,30}{\lambda c})$$
     </p>
 
     <p style="width: 80%;">
