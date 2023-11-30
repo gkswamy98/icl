@@ -115,17 +115,17 @@
 
     <p style="width: 80%;">
         For a fixed constraint, the policy player aims to maximize their reward while satisfying the constraint by solving constrained RL: 
-        $$ \color[HTML]{F96565}{\max_{\lambda > 0}}\color[HTML]{008000}{\min_{\pi \in \Pi}} -J(\color{green}{\pi}, r - \color[HTML]{F96565}{\lambda c})$$ 
+        $$ \color{red}{\max_{\lambda > 0}}\color{green}{\min_{\pi \in \Pi}} -J(\color{green}{\pi}, r - \color{red}{\lambda c})$$ 
     </p>
     <p style="width: 80%;">
         For a fixed policy, the constraint player uses classification to pick the constraint that maximally penalizes the learner relative to the expert: 
-        $$\color[HTML]{F96565}{\max_{c \in \mathcal{F}_c}} J(\pi_E, -\color[HTML]{F96565}{\lambda c}) - J(\color[HTML]{008000}{\pi}, -\color[HTML]{F96565}{\lambda c})$$
+        $$\color{red}{\max_{c \in \mathcal{F}_c}} J(\pi_E, -\color{red}{\lambda c}) - J(\color{green}{\pi}, -\color{red}{\lambda c})$$
     </p>
 
     <h2>2. Leveraging Multi-task Data </h2>
     <p style="width: 80%;"> One potential failure mode of <code>ICL</code> is that it can lead to an overly conservative constraint which forbids all non-expert behavior. Such a constraint would fail to generalize to new tasks. To resolve this, we propose a multi-task version of inverse constraint learning, <code>MT-ICL</code>, which provides better coverage of the state space and learns a shared constraint across multiple tasks.
     If we observe $K$ samples of the form $(r_k, \{\xi \sim \pi_E^k \})$, we can formulate the multi-task game as:  </p>
-    $$\color[HTML]{F96565}{\max_{c \in \mathcal{F}_c}}\color[HTML]{008000}{\min_{\pi^{1:K} \in \Pi}}\color[HTML]{F96565}{\max_{\lambda^{1:K} > 0}}  \sum_i^K J(\pi_E^i, r^i - \color[HTML]{F96565}{\lambda^i c}) - J(\color{green}{\pi^i}, r^i - \color[HTML]{F96565}{\lambda^i c})$$
+    $$\color{red}{\max_{c \in \mathcal{F}_c}}\color{green}{\min_{\pi^{1:K} \in \Pi}}\color{red}{\max_{\lambda^{1:K} > 0}}  \sum_i^K J(\pi_E^i, r^i - \color{red}{\lambda^i c}) - J(\color{green}{\pi^i}, r^i - \color{red}{\lambda^i c})$$
     <p style="width: 80%;"> We further provide a statistical condition of generalization of the shared constraint and empirically show that <code>MT-ICL</code> generalizes better to new tasks.</p>
 
 
